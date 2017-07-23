@@ -1,0 +1,47 @@
+{
+  "name": "link-packages",
+  "version": "0.0.0",
+  "description": "Find and `yarn link` local NodeJs packages",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/possibilities/link-packages"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/possibilities/link-packages/issues"
+  },
+  "homepage": "https://github.com/possibilities/link-packages",
+  "files": [
+    "bin",
+    "lib"
+  ],
+  "bin": {
+    "link-packages": "bin/link-packages"
+  },
+  "scripts": {
+    "dev": "rimraf lib && babel src --out-dir lib --watch",
+    "build": "rimraf lib && babel src --out-dir lib",
+    "prepublish": "rimraf lib && babel src --out-dir lib",
+    "test": "echo no tests",
+    "lint": "standard",
+    "pretest": "standard"
+  },
+  "dependencies": {
+    "child-process-promise": "^2.2.1",
+    "fs-extra": "^4.0.0",
+    "yargs": "^8.0.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-stage-0": "^6.24.1",
+    "rimraf": "^2.6.1",
+    "standard": "^10.0.2"
+  },
+  "babel": {
+    "presets": [
+      "env",
+      "stage-0"
+    ]
+  }
+}
