@@ -16,8 +16,4 @@ Typically this utility is invoke wherever you keep your NodeJs projects. Any lin
 link-packages
 ```
 
-## Development
-
-```shell
-yarn dev
-```
+See `link-packages --help` for full documentation.
