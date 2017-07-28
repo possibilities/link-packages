@@ -1,4 +1,4 @@
-# Link packages
+# Link packages [![Build Status](https://travis-ci.org/possibilities/link-packages.svg?branch=master)](https://travis-ci.org/possibilities/link-packages)
 
 Find and `yarn link` local NodeJs packages
 
