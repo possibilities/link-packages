@@ -13,6 +13,7 @@ yarn global add link-packages
 Typically this utility is invoke wherever you keep your NodeJs projects. Any linkable projects found in `process.cwd()` will be symlinked using `yarn link`.
 
 ```shell
+cd /path/to/your/code
 link-packages
 ```
 
