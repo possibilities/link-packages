@@ -2,6 +2,38 @@ const { join: joinPath } = require('path')
 const { readJsonSync, readdirSync, existsSync } = require('fs-extra')
 const { spawn } = require('child-process-promise')
 
+// Delve into the FS and find the names of dependencies. This includes
+// uncoped names where we can just grab the name of the directory inside
+// `node_modules` and scoped packages where we need to delve further
+// into the scope directory, e.g. `node_modules/@versal/`.
+const findDependencyNamesForLocalPackage = rootPath => {
+  const scopedPackagesRoot = joinPath(rootPath, 'node_modules')
+  // Skip if we don't have any node modules present
+  if (!existsSync(scopedPackagesRoot)) {
+    return []
+  }
+
+  // Find the packages directly in node_modules
+  const unscopedPackages = readdirSync(scopedPackagesRoot)
+    .filter(moduleName => !moduleName.startsWith('@'))
+    .map(moduleName => joinPath(rootPath, moduleName))
+
+  // Find packages in named scopes, e.g. @versal
+  const scopedPackages = readdirSync(scopedPackagesRoot)
+    .reduce((names, moduleName) => {
+      if (moduleName.startsWith('@')) {
+        const scopeName = moduleName.split('/').pop()
+        const scopePath = joinPath(scopedPackagesRoot, moduleName)
+        const scopedNames = readdirSync(scopePath)
+          .map(name => `${scopeName}/${name}`)
+        names = [...names, ...scopedNames]
+      }
+      return names
+    }, [])
+
+  return [...scopedPackages, ...unscopedPackages]
+}
+
 // Finds all modules in `process.cwd()` and dredges up the manifest and other
 // pertinent metadata.
 const findLocalModules = (rootPath, config = {}) => {
@@ -25,14 +57,9 @@ const findLocalModules = (rootPath, config = {}) => {
     }))
     // Filter out un-named modules
     .filter(module => module.manifest.name)
-    // Filter out modules without dependencies
-    .filter(module => module.manifest.dependencies || module.manifest.devDependencies)
     // Find applicable links and add them to the registry
     .forEach(module => {
-      const dependencyNames = [
-        ...Object.keys(module.manifest.dependencies || {}),
-        ...Object.keys(module.manifest.devDependencies || {})
-      ]
+      const dependencyNames = findDependencyNamesForLocalPackage(module.path)
       if (modulesByName[module.manifest.name]) {
         console.warn('WARNING: Module already found')
         console.warn('  Using module found at:', modulesByName[module.manifest.name].path)
