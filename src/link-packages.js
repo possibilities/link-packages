@@ -26,7 +26,7 @@ const findLocalModules = (rootPath, config = {}) => {
     // Filter out un-named modules
     .filter(module => module.manifest.name)
     // Filter out modules without dependencies
-    .filter(module => module.manifest.dependencies)
+    .filter(module => module.manifest.dependencies || module.manifest.devDependencies)
     // Find applicable links and add them to the registry
     .forEach(module => {
       const dependencyNames = [
